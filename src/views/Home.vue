@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Hukam></Hukam>
+    <Hukam/>
   </div>
 </template>
 

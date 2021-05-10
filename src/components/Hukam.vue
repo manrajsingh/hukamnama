@@ -1,29 +1,26 @@
 <template>
   <div>
-    <div class="columns p-4 mt-3">
-      <div class="column has-text-centered">
-        <div class="field">
-          <label class="label">
-            <span class="t-gurmukhi">AMg</span>
-            <span class="mx-3">|</span>
-            <span>Page</span>
-          </label>
-          <div class="field-body is-justify-content-center">
-            <span class="t-gurmukhi"> {{source_page}} </span>
-            <span class="mx-3">|</span>
-            <span> {{ source_page }} </span>
-          </div>
+    <div class="columns">
+      <div class="column is-half has-text-left" style="border-right:1px solid #cecece">
+        <div class="columns">
+          <div class="column has-text-left t-gurmukhi">{{selectedDate}}</div>
+          <div class="column has-text-centered"><h1 class="title is-2 has-text-centered t-gurmukhi">{{title.gurmukhi}}</h1></div>
+          <div class="column has-text-right"><span class="t-gurmukhi">AMg {{source_page}}</span></div>
         </div>
+        <span v-for="v in verses" v-bind:key="v.id"  class="mt-4" style="font-size: 2vw;"> 
+            <span class="t-gurmukhi t-gurmukhi-verses">{{v.verse.gurmukhi}}</span>
+        </span>
       </div>
-    </div>
-    <div class="p-4">
-      <h1 class="title is-2 has-text-centered t-gurmukhi">{{title}}</h1>
-      <div v-for="v in verses" v-bind:key="v.id"  class="mt-4 has-text-centered">
-          <div class="t-gurmukhi t-gurmukhi-verses">{{v.verse.gurmukhi}}</div>
-          <div v-if="translations.english.is_showing">{{v.translation.en.bdb}}</div>
-          <div class="t-gurmukhi"
-            v-if="translations.punjabi.is_showing">{{v.translation.pu.bdb.gurmukhi}}</div>
-          <div v-if="translations.spanish.is_showing">{{v.translation.es.sn}}</div>
+      <div class="column is-half has-text-left">
+        <div class="columns">
+          <div class="column has-text-left">{{selectedDate}}</div>
+          <div class="column has-text-centered"><h1 class="title is-2 has-text-centered">{{title.english}}</h1></div>
+          <div class="column has-text-right"><span>Page {{source_page}}</span></div>
+        </div>
+        
+        <span v-for="v in verses" v-bind:key="v.id"  class="mt-4" style="font-size: 2vh;">
+            <span>{{v.translation.en.bdb}}</span>
+        </span>
       </div>
     </div>
   </div>
@@ -36,9 +33,9 @@ export default {
   data() {
     return {
       current_date: new Date(),
-      title: '',
-      source: '',
-      source_page: '',
+      title: [],
+      source: [],
+      source_page: [],
       verses: [],
       translations: {
         english: { is_showing: (this.$route.params.lang=='english')?true:false, text: 'English' },
@@ -77,7 +74,7 @@ export default {
       }/${myDate.getDate().toString().padStart(2, '0')}`;
     },
     setHukamData(data) {
-      this.title = data.shabads[0].shabadInfo.raag.gurmukhi;
+      this.title = data.shabads[0].shabadInfo.raag;
       this.source = data.shabads[0].shabadInfo.source.gurmukhi;
       this.source_page = data.shabads[0].shabadInfo.source.pageNo;
       this.verses = data.shabads[0].verses;

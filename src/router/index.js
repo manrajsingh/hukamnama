@@ -10,6 +10,10 @@ const routes = [
   {
     path: '/translate/:lang',
     component: Home
+  },
+  {
+    path: '/translate',
+    component: Home
   }
    
 ]
