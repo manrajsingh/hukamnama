@@ -1,25 +1,31 @@
 <template>
   <div>
     <div class="columns">
-      <div class="column is-half has-text-left" style="border-right:1px solid #cecece">
+      <div class="column has-text-left">
         <div class="columns">
           <div class="column has-text-left t-gurmukhi">
             <button class="button is-small" v-on:click="decrementDate()">&lt;</button>
             {{hukam_date}}
-            <button class="button is-small" v-on:click="incrementDate()">&gt;</button>
+            <button v-if="show_tomorrow_btn()" class="button is-small" v-on:click="incrementDate()">&gt;</button>
           </div>
           <div class="column has-text-centered"><h1 class="title is-2 has-text-centered t-gurmukhi">{{title.gurmukhi}}</h1></div>
           <div class="column has-text-right"><span class="t-gurmukhi">AMg {{source_page}}</span></div>
         </div>
         <div class="verses">
           <span v-for="v in verses" v-bind:key="v.id"  class="mt-4"> 
-              <span class="t-gurmukhi">{{v.verse.gurmukhi}}</span>
+              <span class="t-gurmukhi px-2">{{v.verse.gurmukhi}}</span>
           </span>
         </div>
       </div>
-      <div class="column is-half has-text-left">
+      
+      <div v-if="translations.english.is_showing" class="column is-half has-text-left" style="border-left:1px solid #cecece">
+        <!-- English -->
         <div class="columns">
-          <div class="column has-text-left">{{hukam_date}}</div>
+          <div class="column has-text-left">
+            <button class="button is-small" v-on:click="decrementDate()">&lt;</button>
+            {{hukam_date}}
+            <button v-if="show_tomorrow_btn()" class="button is-small" v-on:click="incrementDate()">&gt;</button>
+          </div>
           <div class="column has-text-centered"><h1 class="title is-2 has-text-centered">{{title.english}}</h1></div>
           <div class="column has-text-right"><span>Page {{source_page}}</span></div>
         </div>
@@ -29,6 +35,26 @@
           </span>
         </div>
       </div>
+
+      <div v-if="translations.punjabi.is_showing" class="column is-half has-text-left" style="border-left:1px solid #cecece">
+        <!-- Punjabi -->
+        <div class="columns">
+          <div class="column has-text-left">
+            <button class="button is-small" v-on:click="decrementDate()">&lt;</button>
+            {{hukam_date}}
+            <button v-if="show_tomorrow_btn()" class="button is-small" v-on:click="incrementDate()">&gt;</button>
+          </div>
+          <div class="column has-text-centered"><h1 class="title is-2 has-text-centered t-gurmukhi">{{title.gurmukhi}}</h1></div>
+          <div class="column has-text-right"><span>Page {{source_page}}</span></div>
+        </div>
+        <div class="verses">
+          <span v-for="v in verses" v-bind:key="v.id"  class="mt-4 t-gurmukhi">
+              <span>{{v.translation.pu.ms.gurmukhi}}</span>
+          </span>
+        </div>
+      </div>
+
+
     </div>
   </div>
 </template>
@@ -88,6 +114,9 @@ export default {
 
   },
   methods: {
+    show_tomorrow_btn(){
+      return this.current_date.getDate() != new Date().getDate();
+    },
     incrementDate(){
       this.current_date.setDate(this.current_date.getDate()+1);
       this.getHukam(this.getDate());
