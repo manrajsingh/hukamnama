@@ -3,24 +3,31 @@
     <div class="columns">
       <div class="column is-half has-text-left" style="border-right:1px solid #cecece">
         <div class="columns">
-          <div class="column has-text-left t-gurmukhi">{{selectedDate}}</div>
+          <div class="column has-text-left t-gurmukhi">
+            <button class="button is-small" v-on:click="decrementDate()">&lt;</button>
+            {{hukam_date}}
+            <button class="button is-small" v-on:click="incrementDate()">&gt;</button>
+          </div>
           <div class="column has-text-centered"><h1 class="title is-2 has-text-centered t-gurmukhi">{{title.gurmukhi}}</h1></div>
           <div class="column has-text-right"><span class="t-gurmukhi">AMg {{source_page}}</span></div>
         </div>
-        <span v-for="v in verses" v-bind:key="v.id"  class="mt-4" style="font-size: 2vw;"> 
-            <span class="t-gurmukhi t-gurmukhi-verses">{{v.verse.gurmukhi}}</span>
-        </span>
+        <div class="verses">
+          <span v-for="v in verses" v-bind:key="v.id"  class="mt-4"> 
+              <span class="t-gurmukhi t-gurmukhi-verses">{{v.verse.gurmukhi}}</span>
+          </span>
+        </div>
       </div>
       <div class="column is-half has-text-left">
         <div class="columns">
-          <div class="column has-text-left">{{selectedDate}}</div>
+          <div class="column has-text-left">{{hukam_date}}</div>
           <div class="column has-text-centered"><h1 class="title is-2 has-text-centered">{{title.english}}</h1></div>
           <div class="column has-text-right"><span>Page {{source_page}}</span></div>
         </div>
-        
-        <span v-for="v in verses" v-bind:key="v.id"  class="mt-4" style="font-size: 2vh;">
-            <span>{{v.translation.en.bdb}}</span>
-        </span>
+        <div class="verses">
+          <span v-for="v in verses" v-bind:key="v.id"  class="mt-4">
+              <span>{{v.translation.en.bdb}}</span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -34,6 +41,7 @@ export default {
     return {
       current_date: new Date(),
       title: [],
+      hukam_date:'',
       source: [],
       source_page: [],
       verses: [],
@@ -67,6 +75,14 @@ export default {
     },
   },
   methods: {
+    incrementDate(){
+      this.current_date.setDate(this.current_date.getDate()+1);
+      this.getHukam(this.getDate());
+    },
+    decrementDate(){
+      this.current_date.setDate(this.current_date.getDate()-1);
+      this.getHukam(this.getDate());
+    },
     getDate() {
       const myDate = this.current_date;
       return `${myDate.getFullYear()}/${
@@ -74,6 +90,7 @@ export default {
       }/${myDate.getDate().toString().padStart(2, '0')}`;
     },
     setHukamData(data) {
+      this.hukam_date = data.date.gregorian.month + '/' + data.date.gregorian.date + '/' + data.date.gregorian.year;
       this.title = data.shabads[0].shabadInfo.raag;
       this.source = data.shabads[0].shabadInfo.source.gurmukhi;
       this.source_page = data.shabads[0].shabadInfo.source.pageNo;
