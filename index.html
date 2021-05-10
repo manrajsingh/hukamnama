@@ -1,1 +1,85 @@
-hello world
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" id="hukam-container">
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script id="hukam-template" type="text/x-handlebars-template">
+        <div class="col-sm">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm">
+                        {{date}}
+                    </div>
+                    <div class="col-sm">
+                        {{title}}
+                    </div>
+                    <div class="col-sm">
+                        {{page}}
+                    </div>
+                </div>
+                <div class="row">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Porro ullam impedit veniam maxime accusamus dolorem numquam, ab molestias veritatis, facere dolore harum, unde inventore pariatur delectus reiciendis consectetur dicta dolor.
+                </div>
+            </div>
+        </div>
+    </script>
+    <script>
+        $(document).ready(function () {
+            var current_date = new Date();
+
+            function getDate() {
+                var myDate = current_date;
+                return `${myDate.getFullYear()}/${
+                    (myDate.getMonth() + 1).toString().padStart(2, '0')
+                }/${myDate.getDate().toString().padStart(2, '0')}`;
+            }
+
+            function getHukam() {
+                $.ajax({
+                    'type': "GET",
+                    'url': 'https://api.banidb.com/v2/hukamnamas/' + getDate(),
+
+                    'success': function (result) {
+                        var source = document.getElementById("hukam-template").innerHTML;
+                        var template = Handlebars.compile(source);
+                        var context = {date: '02211984', title: "My New Post", page: "This is my first post!" };
+                        var html = template(context);
+                        $("#hukam-container").html(html);
+                        //console.log(result);
+                    }
+
+                });
+            }
+            console.log(getDate());
+            getHukam();
+        });
+    </script>
+</body>
+
+</html>
