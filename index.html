@@ -16,6 +16,7 @@
 <body>
     <div class="container-fluid">
         <div class="row" id="hukam-container">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis tenetur est eos alias quos necessitatibus nostrum placeat voluptates autem. Veniam consectetur perferendis facere dignissimos eveniet nostrum, est exercitationem ducimus numquam.
         </div>
     </div>
 
@@ -34,7 +35,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm">
-                        {{date}}
+                        {{hukam_date}}
                     </div>
                     <div class="col-sm">
                         {{title}}
@@ -60,24 +61,38 @@
                 }/${myDate.getDate().toString().padStart(2, '0')}`;
             }
 
+            function urlParam(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results==null) {
+                    return null;
+                }
+                return decodeURI(results[1]) || 0;
+            }
+
             function getHukam() {
                 $.ajax({
                     'type': "GET",
                     'url': 'https://api.banidb.com/v2/hukamnamas/' + getDate(),
 
-                    'success': function (result) {
+                    'success': function (data) {
+
+                        query_string = window.location.search;
+                        var context = {};
+                        context.hukam_date = data.date.gregorian.month + '/' + data.date.gregorian.date + '/' + data.date.gregorian.year;
+                        context.title = data.shabads[0].shabadInfo.raag;
+                        context.source = data.shabads[0].shabadInfo.source.gurmukhi;
+                        context.source_page = data.shabads[0].shabadInfo.source.pageNo;
+                        context.verses = data.shabads[0].verses;
                         var source = document.getElementById("hukam-template").innerHTML;
                         var template = Handlebars.compile(source);
-                        var context = {date: '02211984', title: "My New Post", page: "This is my first post!" };
                         var html = template(context);
                         $("#hukam-container").html(html);
-                        //console.log(result);
+                        console.log(query_string.trim());
                     }
 
                 });
             }
-            console.log(getDate());
-            getHukam();
+            //getHukam();
         });
     </script>
 </body>
