@@ -13,7 +13,7 @@
         </div>
         <div class="verses">
           <span v-for="v in verses" v-bind:key="v.id"  class="mt-4"> 
-              <span class="t-gurmukhi t-gurmukhi-verses">{{v.verse.gurmukhi}}</span>
+              <span class="t-gurmukhi">{{v.verse.gurmukhi}}</span>
           </span>
         </div>
       </div>
@@ -73,6 +73,19 @@ export default {
     selectedDate() {
       return this.current_date ? this.current_date.toLocaleDateString() : '';
     },
+  },
+  updated: function(){
+    var verses = document.getElementsByClassName("verses")
+    
+    for (var idx=0; idx < verses.length; idx++){
+      var fontSize=100;
+      verses[idx].style.fontSize=fontSize+'px'; 
+      while(verses[idx].scrollHeight > 920){
+        verses[idx].style.fontSize=fontSize+'px'; 
+        fontSize--;
+      }  
+    }
+
   },
   methods: {
     incrementDate(){
