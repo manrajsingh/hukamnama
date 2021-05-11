@@ -6,12 +6,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="cache-control" content="no-store" />
-    
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta+Mahee:wght@200;300;400&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
     <title>Hello, world!</title>
+    <style>
+
+        .title { font-family: 'Mukta Mahee', sans-serif; text-align: center; }
+        .page  { font-family: 'Mukta Mahee', sans-serif; text-align: right; }
+        .date  { font-family: 'Mukta Mahee', sans-serif; }
+        .verses  { font-family: 'Mukta Mahee', sans-serif; }
+
+    </style>
 </head>
 
 <body>
@@ -23,6 +31,7 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="hukam.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
@@ -35,18 +44,18 @@
         <div class="col-sm">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm">
+                    <div class="col-sm date">
                         {{hukam_date}}
                     </div>
-                    <div class="col-sm">
-                        {{title}}
+                    <div class="col-sm title">
+                        <h1>{{title.unicode}}</h1>
                     </div>
-                    <div class="col-sm">
-                        {{page}}
+                    <div class="col-sm page">
+                        {{source_page}}
                     </div>
                 </div>
-                <div class="row">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Porro ullam impedit veniam maxime accusamus dolorem numquam, ab molestias veritatis, facere dolore harum, unde inventore pariatur delectus reiciendis consectetur dicta dolor.
+                <div class="rowv verses">
+                    {{verses}}
                 </div>
             </div>
         </div>
@@ -71,27 +80,34 @@
             }
 
             function getHukam() {
-                $.ajax({
-                    'type': "GET",
-                    'url': 'https://api.banidb.com/v2/hukamnamas/' + getDate(),
+                query_string = window.location.search;
+                var context = {};
+                context.hukam_date = hukam.date.gregorian.month + '/' + hukam.date.gregorian.date + '/' + hukam.date.gregorian.year;
+                context.title = hukam.shabads[0].shabadInfo.raag;
+                context.source = hukam.shabads[0].shabadInfo.source.gurmukhi;
+                context.source_page = hukam.shabads[0].shabadInfo.source.pageNo;
+                context.author = hukam.shabads[0].shabadInfo.writer.english;
+                context.verses = '';
+                for (idx in hukam.shabads[0].verses) {
+                    context.verses += " " + hukam.shabads[0].verses[idx].verse.unicode;
+                }
 
-                    'success': function (data) {
+                var source = document.getElementById("hukam-template").innerHTML;
+                var template = Handlebars.compile(source);
+                var html = template(context);
+                $("#hukam-container").html(html);
+                console.log(query_string.trim());
 
-                        query_string = window.location.search;
-                        var context = {};
-                        context.hukam_date = data.date.gregorian.month + '/' + data.date.gregorian.date + '/' + data.date.gregorian.year;
-                        context.title = data.shabads[0].shabadInfo.raag;
-                        context.source = data.shabads[0].shabadInfo.source.gurmukhi;
-                        context.source_page = data.shabads[0].shabadInfo.source.pageNo;
-                        context.verses = data.shabads[0].verses;
-                        var source = document.getElementById("hukam-template").innerHTML;
-                        var template = Handlebars.compile(source);
-                        var html = template(context);
-                        $("#hukam-container").html(html);
-                        console.log(query_string.trim());
-                    }
-
-                });
+                var verses = document.getElementsByClassName("verses")
+    
+                for (var idx=0; idx < verses.length; idx++){
+                var fontSize=100;
+                verses[idx].style.fontSize=fontSize+'px'; 
+                while(verses[idx].scrollHeight > 920){
+                    verses[idx].style.fontSize=fontSize+'px'; 
+                    fontSize--;
+                }  
+                }
             }
             getHukam();
         });
